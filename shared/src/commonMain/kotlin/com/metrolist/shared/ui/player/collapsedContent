@@ -6,7 +6,7 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.metrolist.shared.ui.player
-
+import com.metrolist.shared.ui.theme.glassmorphism
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.BoundsTransform
@@ -2344,55 +2344,64 @@ fun PlayerScreen(
                                     }
                                 },
                                 collapsedContent = {
-                                    if (playerType == PlayerType.CLASSIC) {
-                                        VintageClassicBottomBar(
-                                            queueText = stringResource(Res.string.queue),
-                                            sleepTimerText = stringResource(Res.string.sleep_timer),
-                                            sleepTimerRemaining =
-                                                sleepTimerState.remainingMs
-                                                    ?.takeIf { sleepTimerState.isActive }
-                                                    ?.let(::formatSleepTimerRemaining),
-                                            isSleepTimerEnabled = sleepTimerState.isActive,
-                                            sleepTimerDescription = sleepTimerContentDescription(sleepTimerState),
-                                            onSleepTimerClick =
-                                                if (!isListenTogetherGuest) {
-                                                    {
-                                                        hapticManager.perform(HapticEvent.PRESS)
-                                                        showSleepTimerDialog = true
-                                                    }
-                                                } else {
-                                                    null
-                                                },
-                                            lyricsText = stringResource(Res.string.lyrics),
-                                            onQueueClick = {
-                                                hapticManager.perform(HapticEvent.PRESS)
-                                                openQueueSheet()
-                                            },
-                                            onLyricsClick = {
-                                                hapticManager.toggle(!uiState.isLyricsVisible)
-                                                viewModel.setLyricsVisible(!uiState.isLyricsVisible)
-                                            },
-                                            contentColor = textBackgroundColor,
-                                            modifier = Modifier.padding(bottom = navigationBarBottomPadding),
-                                        )
-                                    } else {
-                                        PlayerBottomControls(
-                                            sleepTimerState = sleepTimerState,
-                                            onShowSleepTimer = { showSleepTimerDialog = true },
-                                            isShuffleOn = isShuffleOn,
-                                            onToggleShuffle = viewModel::toggleShuffle,
-                                            repeatMode = repeatMode,
-                                            onToggleRepeat = viewModel::toggleRepeat,
-                                            navigationBarBottomPadding = navigationBarBottomPadding,
-                                            onOpenQueue = ::openQueueSheet,
-                                            onShowPlayerMenu = { showPlayerMenu = true },
-                                            isLyricsVisible = uiState.isLyricsVisible,
-                                            onIsLyricsVisibleChange = { visible -> viewModel.setLyricsVisible(visible) },
-                                            isVideoAvailable = uiState.isVideoAvailable,
-                                            isListenTogetherGuest = isListenTogetherGuest,
-                                        )
-                                    }
-                                },
+    
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            // Наш полупрозрачный фон, рамка и закругление
+            .then(Modifier.glassmorphism(cornerRadius = 32))
+            .padding(bottom = navigationBarBottomPadding)
+    ) {
+        if (playerType == PlayerType.CLASSIC) {
+            VintageClassicBottomBar(
+                queueText = stringResource(Res.string.queue),
+                sleepTimerText = stringResource(Res.string.sleep_timer),
+                sleepTimerRemaining =
+                    sleepTimerState.remainingMs
+                        ?.takeIf { sleepTimerState.isActive }
+                        ?.let(::formatSleepTimerRemaining),
+                isSleepTimerEnabled = sleepTimerState.isActive,
+                sleepTimerDescription = sleepTimerContentDescription(sleepTimerState),
+                onSleepTimerClick =
+                    if (!isListenTogetherGuest) {
+                        {
+                            hapticManager.perform(HapticEvent.PRESS)
+                            showSleepTimerDialog = true
+                        }
+                    } else {
+                        null
+                    },
+                lyricsText = stringResource(Res.string.lyrics),
+                onQueueClick = {
+                    hapticManager.perform(HapticEvent.PRESS)
+                    openQueueSheet()
+                },
+                onLyricsClick = {
+                    hapticManager.toggle(!uiState.isLyricsVisible)
+                    viewModel.setLyricsVisible(!uiState.isLyricsVisible)
+                },
+                contentColor = textBackgroundColor,
+                modifier = Modifier.padding(bottom = navigationBarBottomPadding),
+            )
+        } else {
+            PlayerBottomControls(
+                sleepTimerState = sleepTimerState,
+                onShowSleepTimer = { showSleepTimerDialog = true },
+                isShuffleOn = isShuffleOn,
+                onToggleShuffle = viewModel::toggleShuffle,
+                repeatMode = repeatMode,
+                onToggleRepeat = viewModel::toggleRepeat,
+                navigationBarBottomPadding = navigationBarBottomPadding,
+                onOpenQueue = ::openQueueSheet,
+                onShowPlayerMenu = { showPlayerMenu = true },
+                isLyricsVisible = uiState.isLyricsVisible,
+                onIsLyricsVisibleChange = { visible -> viewModel.setLyricsVisible(visible) },
+                isVideoAvailable = uiState.isVideoAvailable,
+                isListenTogetherGuest = isListenTogetherGuest,
+            )
+        }
+    }
+},
                             ) {
                                 Surface(
                                     modifier =
