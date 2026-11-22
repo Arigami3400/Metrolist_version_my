@@ -224,7 +224,7 @@ fun HomeContent(
     val localShelfCache = remember { HomeShelfCache() }
     val paginationScrollConnection = rememberHomePagination(uiState, listState, onLoadMore)
     
-    // --- НАШ ГРАДИЕНТНЫЙ ФОН ---
+    // --- НАЧАЛО: ГРАДИЕНТНЫЙ ФОН ---
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -300,6 +300,7 @@ fun HomeContent(
             )
         }
     }
+    // --- КОНЕЦ: ГРАДИЕНТНЫЙ ФОН ---
 }
 @Composable
 private fun rememberHomePagination(
