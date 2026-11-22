@@ -245,6 +245,7 @@ private fun MetadataText(
 
 @OptIn(ExperimentalFoundationApi::class)
 @OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SongListItem(
     song: SongItem,
@@ -272,7 +273,7 @@ fun SongListItem(
     val contentColor = colors.content
     val subtitleColor = colors.subtitle
     val linkColor = colors.link
-    val artworkShape = animatedCurrentSongArtworkShape(isCurrent, RoundedCornerShape(16.dp)) // Увеличили скругление обложки
+    val artworkShape = animatedCurrentSongArtworkShape(isCurrent, RoundedCornerShape(16.dp))
     val artworkRotation by rememberCurrentSongArtworkRotation(isCurrent, isPlaying)
     val numberedArtwork = index != null && !showThumbnail && leadingContent == null
     
@@ -280,10 +281,9 @@ fun SongListItem(
         modifier =
             modifier
                 .fillMaxWidth()
-                .heightIn(min = 68.dp) // Сделали карточку чуть выше
-                .padding(vertical = 4.dp, horizontal = 8.dp) // Отступы между карточками
+                .heightIn(min = 68.dp)
+                .padding(vertical = 4.dp, horizontal = 8.dp)
                 .alpha(if (enabled) 1f else 0.38f)
-                // НАШ СТИЛЬ: Стекло, закругление 24dp
                 .clip(RoundedCornerShape(24.dp))
                 .background(Color.White.copy(alpha = 0.08f))
                 .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(24.dp))
@@ -299,7 +299,7 @@ fun SongListItem(
                     },
                     onLongClick = if (longClickEnabled) onLongClick ?: onShowMenu else null,
                 ).onSecondaryClick(onShowMenu)
-                .padding(horizontal = 12.dp, vertical = 10.dp), // Внутренние отступы
+                .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         leadingContent?.let {
@@ -339,7 +339,7 @@ fun SongListItem(
             Box(
                 modifier =
                     Modifier
-                        .squareArtworkSlot(if (numberedArtwork) 36.dp else 52.dp, if (isCurrent) 1f else song.previewAspectRatio) // Обложка 52dp
+                        .squareArtworkSlot(if (numberedArtwork) 36.dp else 52.dp, if (isCurrent) 1f else song.previewAspectRatio)
                         .graphicsLayer { rotationZ = artworkRotation }
                         .clip(artworkShape)
                         .background(MaterialTheme.colorScheme.secondaryContainer),
@@ -368,7 +368,7 @@ fun SongListItem(
                 text = effectiveSong.title,
                 isExplicit = isDesktop && effectiveSong.isExplicit,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.SemiBold, // Жирный шрифт как на макете
+                fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.SemiBold,
                 color = contentColor,
             )
 
@@ -426,7 +426,7 @@ fun SongListItem(
                 Icon(
                     MetrolistIcons.Default.MoreVert,
                     contentDescription = stringResource(Res.string.more_options),
-                    tint = if (isCurrent) contentColor else Color.White.copy(alpha = 0.7f), // Белая кнопка "Ещё"
+                    tint = if (isCurrent) contentColor else Color.White.copy(alpha = 0.7f),
                 )
             }
         }
