@@ -85,6 +85,10 @@ import com.metrolist.shared.youtube.playback.PlaybackResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
+// ИМПОРТЫ ДЛЯ СТЕКЛА (добавлены)
+import com.metrolist.shared.ui.theme.GlassWhite
+import com.metrolist.shared.ui.theme.GlassBorder
+
 @Composable
 internal fun Modifier.focusedPlayerBorder(
     shape: Shape,
@@ -256,6 +260,7 @@ internal fun PlayerBottomControls(
                     }
                 }
 
+                // СТЕКЛЯННАЯ КНОПКА "ЕЩЁ" (ТРИ ТОЧКИ)
                 FilledTonalIconButton(
                     onClick = {
                         hapticManager.perform(HapticEvent.PRESS)
@@ -267,11 +272,12 @@ internal fun PlayerBottomControls(
                             .size(touchTarget)
                             .focusedPlayerBorder(CircleShape)
                             .navigationPopupSource()
-                            .playerControlBlend(),
+                            .playerControlBlend()
+                            .border(1.dp, GlassBorder, CircleShape), // Добавили стеклянную рамку
                     colors =
                         IconButtonDefaults.filledTonalIconButtonColors(
-                            containerColor = playerInactiveControlContainerColor(),
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            containerColor = GlassWhite, // Сделали кнопку прозрачной
+                            contentColor = MaterialTheme.colorScheme.onSurface,
                         ),
                 ) {
                     Icon(
