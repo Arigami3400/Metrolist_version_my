@@ -1,7 +1,10 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.metrolist.shared.ui.screens
-
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
@@ -220,69 +223,84 @@ fun HomeContent(
         }
     val localShelfCache = remember { HomeShelfCache() }
     val paginationScrollConnection = rememberHomePagination(uiState, listState, onLoadMore)
-    BoxWithConstraints(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        val isWide = maxWidth > 840.dp
-        val effectiveShelves =
-            shelves ?: (shelfCache ?: localShelfCache).build(uiState, text, maxWidth)
-
-        DragScrollableColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize().nestedScroll(paginationScrollConnection).desktopArrowScroll(listState),
-            contentPadding = contentPadding,
-            verticalArrangement = Arrangement.spacedBy(if (isWide) 16.dp else 8.dp),
-        ) {
-            header?.invoke(this)
-
-            renderHomeShelves(
-                shelves = effectiveShelves,
-                shuffleLabel = text.shuffle,
-                onItemClick = onItemClick,
-                onVideoItemClick = onVideoItemClick,
-                onSpeedDialItemClick = onSpeedDialItemClick,
-                onItemLongClick = onItemLongClick,
-                onShuffleSongs = onShuffleSongs,
-                onPlaySongs = onPlaySongs,
-                onLibraryClick = onLibraryClick,
-                onLocalShelfClick = onLocalShelfClick,
-                onSpeedDialItemLongClick = onSpeedDialItemLongClick,
-                onSpeedDialItemSecondaryClick = onSpeedDialItemSecondaryClick,
-                onArtistClick = onArtistClick,
-                onAlbumClick = onAlbumClick,
-                onPlayAlbum = onPlayAlbum,
-                currentSongId = activeSongId,
-                isPlaying = isPlaying,
-                isItemEnabled = isItemEnabled,
-                onShowSurpriseMenu = onShowSurpriseMenu,
-                onShowSurpriseSecondaryMenu = onShowSurpriseSecondaryMenu,
-                isLandscape = isLandscape,
-                speedDialSurpriseAtEndOfFirstPage = speedDialSurpriseAtEndOfFirstPage,
-                isWide = isWide,
+    
+    // --- НАШ ГРАДИЕНТНЫЙ ФОН ---
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.radialGradient(
+                    colors = listOf(
+                        Color(0xFF6D28D9), // Ярко-фиолетовый
+                        Color(0xFF0F0A21)  // Тёмный
+                    ),
+                    radius = 1500f
+                )
             )
+    ) {
+        BoxWithConstraints(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+            val isWide = maxWidth > 840.dp
+            val effectiveShelves =
+                shelves ?: (shelfCache ?: localShelfCache).build(uiState, text, maxWidth)
 
-            if (uiState.isContentLoading || uiState.isLoadingMore) {
-                item(key = "home_content_loading") {
-                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                        ContainedLoadingIndicator(Modifier.semantics { contentDescription = text.loading })
+            DragScrollableColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize().nestedScroll(paginationScrollConnection).desktopArrowScroll(listState),
+                contentPadding = contentPadding,
+                verticalArrangement = Arrangement.spacedBy(if (isWide) 16.dp else 8.dp),
+            ) {
+                header?.invoke(this)
+
+                renderHomeShelves(
+                    shelves = effectiveShelves,
+                    shuffleLabel = text.shuffle,
+                    onItemClick = onItemClick,
+                    onVideoItemClick = onVideoItemClick,
+                    onSpeedDialItemClick = onSpeedDialItemClick,
+                    onItemLongClick = onItemLongClick,
+                    onShuffleSongs = onShuffleSongs,
+                    onPlaySongs = onPlaySongs,
+                    onLibraryClick = onLibraryClick,
+                    onLocalShelfClick = onLocalShelfClick,
+                    onSpeedDialItemLongClick = onSpeedDialItemLongClick,
+                    onSpeedDialItemSecondaryClick = onSpeedDialItemSecondaryClick,
+                    onArtistClick = onArtistClick,
+                    onAlbumClick = onAlbumClick,
+                    onPlayAlbum = onPlayAlbum,
+                    currentSongId = activeSongId,
+                    isPlaying = isPlaying,
+                    isItemEnabled = isItemEnabled,
+                    onShowSurpriseMenu = onShowSurpriseMenu,
+                    onShowSurpriseSecondaryMenu = onShowSurpriseSecondaryMenu,
+                    isLandscape = isLandscape,
+                    speedDialSurpriseAtEndOfFirstPage = speedDialSurpriseAtEndOfFirstPage,
+                    isWide = isWide,
+                )
+
+                if (uiState.isContentLoading || uiState.isLoadingMore) {
+                    item(key = "home_content_loading") {
+                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                            ContainedLoadingIndicator(Modifier.semantics { contentDescription = text.loading })
+                        }
+                    }
+                }
+
+                if (!uiState.isLoading && uiState.error.isNullOrBlank() && uiState.loadMoreError && onLoadMore != null) {
+                    item(key = "home_load_more_retry") {
+                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                            TextButton(onClick = onLoadMore, shapes = ButtonDefaults.shapes()) { Text(text.tryAgain) }
+                        }
                     }
                 }
             }
 
-            if (!uiState.isLoading && uiState.error.isNullOrBlank() && uiState.loadMoreError && onLoadMore != null) {
-                item(key = "home_load_more_retry") {
-                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                        TextButton(onClick = onLoadMore, shapes = ButtonDefaults.shapes()) { Text(text.tryAgain) }
-                    }
-                }
-            }
+            HomeRevalidationIndicator(
+                visible = uiState.isRevalidating,
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = contentPadding.calculateTopPadding()),
+            )
         }
-
-        HomeRevalidationIndicator(
-            visible = uiState.isRevalidating,
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = contentPadding.calculateTopPadding()),
-        )
     }
 }
-
 @Composable
 private fun rememberHomePagination(
     uiState: HomeUiState,
