@@ -6,7 +6,10 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.metrolist.shared.ui.components
-
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -241,6 +244,7 @@ private fun MetadataText(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SongListItem(
     song: SongItem,
@@ -268,18 +272,22 @@ fun SongListItem(
     val contentColor = colors.content
     val subtitleColor = colors.subtitle
     val linkColor = colors.link
-    val artworkShape = animatedCurrentSongArtworkShape(isCurrent, RoundedCornerShape(4.dp))
+    val artworkShape = animatedCurrentSongArtworkShape(isCurrent, RoundedCornerShape(16.dp)) // Увеличили скругление обложки
     val artworkRotation by rememberCurrentSongArtworkRotation(isCurrent, isPlaying)
     val numberedArtwork = index != null && !showThumbnail && leadingContent == null
+    
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
-                .heightIn(min = 56.dp)
+                .heightIn(min = 68.dp) // Сделали карточку чуть выше
+                .padding(vertical = 4.dp, horizontal = 8.dp) // Отступы между карточками
                 .alpha(if (enabled) 1f else 0.38f)
-                .clip(if (isCurrent) CircleShape else RoundedCornerShape(8.dp))
-                .background(colors.container)
-                .focusOutline(if (isCurrent) CircleShape else RoundedCornerShape(8.dp))
+                // НАШ СТИЛЬ: Стекло, закругление 24dp
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color.White.copy(alpha = 0.08f))
+                .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(24.dp))
+                .focusOutline(RoundedCornerShape(24.dp))
                 .currentSongSemantics(isCurrent, isPlaying)
                 .combinedClickable(
                     onClick = {
@@ -291,7 +299,7 @@ fun SongListItem(
                     },
                     onLongClick = if (longClickEnabled) onLongClick ?: onShowMenu else null,
                 ).onSecondaryClick(onShowMenu)
-                .padding(horizontal = 8.dp, vertical = 8.dp),
+                .padding(horizontal = 12.dp, vertical = 10.dp), // Внутренние отступы
         verticalAlignment = Alignment.CenterVertically,
     ) {
         leadingContent?.let {
@@ -331,7 +339,7 @@ fun SongListItem(
             Box(
                 modifier =
                     Modifier
-                        .squareArtworkSlot(if (numberedArtwork) 36.dp else 48.dp, if (isCurrent) 1f else song.previewAspectRatio)
+                        .squareArtworkSlot(if (numberedArtwork) 36.dp else 52.dp, if (isCurrent) 1f else song.previewAspectRatio) // Обложка 52dp
                         .graphicsLayer { rotationZ = artworkRotation }
                         .clip(artworkShape)
                         .background(MaterialTheme.colorScheme.secondaryContainer),
@@ -352,7 +360,7 @@ fun SongListItem(
                     )
                 }
             }
-            Spacer(Modifier.width(if (numberedArtwork) 8.dp else 12.dp))
+            Spacer(modifier = Modifier.width(if (numberedArtwork) 8.dp else 14.dp))
         }
 
         Column(modifier = Modifier.weight(1f)) {
@@ -360,7 +368,7 @@ fun SongListItem(
                 text = effectiveSong.title,
                 isExplicit = isDesktop && effectiveSong.isExplicit,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
+                fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.SemiBold, // Жирный шрифт как на макете
                 color = contentColor,
             )
 
@@ -410,11 +418,15 @@ fun SongListItem(
         if (trailingContent != null) {
             trailingContent()
         } else {
-            IconButton(modifier = Modifier.navigationPopupSource(), onClick = onShowMenu, shapes = IconButtonDefaults.shapes()) {
+            IconButton(
+                modifier = Modifier.navigationPopupSource(),
+                onClick = onShowMenu,
+                shapes = IconButtonDefaults.shapes()
+            ) {
                 Icon(
                     MetrolistIcons.Default.MoreVert,
                     contentDescription = stringResource(Res.string.more_options),
-                    tint = if (isCurrent) contentColor else LocalContentColor.current,
+                    tint = if (isCurrent) contentColor else Color.White.copy(alpha = 0.7f), // Белая кнопка "Ещё"
                 )
             }
         }
