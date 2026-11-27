@@ -1,7 +1,7 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.metrolist.android.ui
-
+import androidx.compose.ui.graphics.Color
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -1598,32 +1598,23 @@ fun MetrolistApp(
                                                     )
                                                 } else {
                                                     TopAppBar(
-                                                        expandedHeight = TabTopBarHeight,
-                                                        navigationIcon = {
-                                                        },
-                                                        title = topBarTitle,
-                                                        subtitle = topBarSubtitle,
-                                                        actions = topBarActions,
-                                                        scrollBehavior = topAppBarScrollBehavior,
-                                                        colors =
-                                                            TopAppBarDefaults.topAppBarColors(
-                                                                containerColor =
-                                                                    if (pureBlack) {
-                                                                        Color.Black
-                                                                    } else {
-                                                                        MaterialTheme.colorScheme.surfaceContainer
-                                                                    },
-                                                                scrolledContainerColor =
-                                                                    if (pureBlack) {
-                                                                        Color.Black
-                                                                    } else {
-                                                                        MaterialTheme.colorScheme.surfaceContainer
-                                                                    },
-                                                                titleContentColor = MaterialTheme.colorScheme.onSurface,
-                                                                actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                                navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                            ),
-                                                    )
+    expandedHeight = TabTopBarHeight,
+    navigationIcon = {
+    },
+    title = topBarTitle,
+    subtitle = topBarSubtitle,
+    actions = topBarActions,
+    scrollBehavior = topAppBarScrollBehavior,
+    colors =
+        TopAppBarDefaults.topAppBarColors(
+            // Делаем фон панели прозрачным
+            containerColor = Color.Transparent, 
+            scrolledContainerColor = Color.Transparent,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
+)
                                                 }
                                             }
                                         },
